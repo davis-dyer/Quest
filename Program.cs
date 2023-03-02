@@ -11,7 +11,21 @@ namespace Quest
         {
             Console.WriteLine("What is your name, adventurer?");
             string NewName = Console.ReadLine();
-            Adventurer theAdventurer = new Adventurer(NewName);
+            //Phase 4 - #8 --- need to create this new instance of the Robe class before the robe parameter is passed into the Adventurer.
+            Robe theRobe = new Robe();
+            theRobe.Colors = new List<string>
+            {
+                "Peach", "Indigo", "Bright"
+            };
+            theRobe.Length = 36;
+            Hat newHat = new Hat();
+            newHat.ShininessLevel = 5;
+            Adventurer theAdventurer = new Adventurer(NewName, theRobe, newHat);
+
+            Prize newPrize = new Prize("You win eternal glory");
+
+            //Showing the Adventurers attributes
+            Console.WriteLine(theAdventurer.GetDescription());
             // Create a few challenges for our Adventurer's quest
             // The "Challenge" Constructor takes three arguments
             //   the text of the challenge
@@ -36,6 +50,22 @@ namespace Quest
                 4, 20
             );
 
+            Challenge areYouADingDong = new Challenge(
+                "On a scale of 1-10, how much of a ding-dong are ya?", 4, 500
+            );
+
+            Challenge lameMathProblem = new Challenge(
+                "How much money is five cents?", 5, 15
+            );
+
+            Challenge cartWheels = new Challenge(
+                "How many times can I cartwheel", 8, 10
+            );
+
+            Challenge octivePitch = new Challenge(
+                "Sing right now and enter in the pitch you were in", 4, 90
+            );
+
             // "Awesomeness" is like our Adventurer's current "score"
             // A higher Awesomeness is better
 
@@ -56,16 +86,35 @@ namespace Quest
                 theAnswer,
                 whatSecond,
                 guessRandom,
-                favoriteBeatle
+                favoriteBeatle,
+                areYouADingDong,
+                lameMathProblem,
+                cartWheels,
+                octivePitch
             };
+
+            List<int> random = new List<int>();
+
+            while (random.Count != 5)
+            {
+                Random r = new Random();
+                int index = r.Next(0, challenges.Count);
+                if (!random.Contains(index))
+                {
+                    random.Add(index);
+                }
+            }
+
+
+
 
             // Loop through all the challenges and subject the Adventurer to them
             bool x = true;
             while (x == true)
             {
-                foreach (Challenge challenge in challenges)
+                foreach (int id in random)
                 {
-                    challenge.RunChallenge(theAdventurer);
+                    challenges[id].RunChallenge(theAdventurer);
                 }
 
                 // This code examines how Awesome the Adventurer is after completing the challenges
@@ -83,11 +132,19 @@ namespace Quest
                     Console.WriteLine("I guess you did...ok? ...sorta. Still, you should get out of my sight.");
                 }
 
+                newPrize.ShowPrize(theAdventurer);
+
                 Console.WriteLine("Would you like to try again? (y/n)");
                 string TryRes = Console.ReadLine();
                 if (TryRes.ToLower() == "n")
                 {
                     x = false;
+                }
+                else if (TryRes.ToLower() == "y")
+                {
+                    theAdventurer.Awesomeness += (theAdventurer.numberRight * 10);
+                    Console.WriteLine($"You have this many {theAdventurer.Awesomeness} points");
+                    theAdventurer.numberRight = 0;
                 }
             }
         }
